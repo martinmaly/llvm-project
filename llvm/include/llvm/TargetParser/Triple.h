@@ -110,7 +110,8 @@ public:
     renderscript32, // 32-bit RenderScript
     renderscript64, // 64-bit RenderScript
     ve,             // NEC SX-Aurora Vector Engine
-    LastArchType = ve
+    propeller,   // Propeller: Parallax Propeller
+    LastArchType = propeller
   };
   enum SubArchType {
     NoSubArch,
@@ -203,7 +204,8 @@ public:
     OpenEmbedded,
     Intel,
     Meta,
-    LastVendorType = Meta
+    Parallax,
+    LastVendorType = Parallax
   };
   enum OSType {
     UnknownOS,
@@ -1160,6 +1162,11 @@ public:
   /// Tests whether the target is VE
   bool isVE() const {
     return getArch() == Triple::ve;
+  }
+
+  /// Tests whether the target is Propeller
+  bool isPropeller() const {
+    return getArch() == Triple::propeller;
   }
 
   /// Tests whether the target is wasm (32- and 64-bit).

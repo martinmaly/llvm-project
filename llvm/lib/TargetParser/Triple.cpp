@@ -58,6 +58,7 @@ StringRef Triple::getArchTypeName(ArchType Kind) {
   case ppc64le:        return "powerpc64le";
   case ppc:            return "powerpc";
   case ppcle:          return "powerpcle";
+  case propeller:      return "propeller";
   case r600:           return "r600";
   case renderscript32: return "renderscript32";
   case renderscript64: return "renderscript64";
@@ -283,6 +284,7 @@ StringRef Triple::getVendorTypeName(VendorType Kind) {
   case SUSE: return "suse";
   case Meta:
     return "meta";
+  case Parallax: return "parallax";
   }
 
   llvm_unreachable("Invalid VendorType!");
@@ -522,6 +524,7 @@ Triple::ArchType Triple::getArchTypeForLLVMName(StringRef Name) {
       .Case("loongarch64", loongarch64)
       .Case("dxil", dxil)
       .Case("xtensa", xtensa)
+      .Case("propeller", propeller)
       .Default(UnknownArch);
 }
 
@@ -674,6 +677,7 @@ static Triple::ArchType parseArch(StringRef ArchName) {
                   "dxilv1.9"},
                  Triple::dxil)
           .Case("xtensa", Triple::xtensa)
+          .Case("propeller", Triple::propeller)
           .Default(Triple::UnknownArch);
 
   // Some architectures require special parsing logic just to compute the
@@ -707,6 +711,7 @@ static Triple::VendorType parseVendor(StringRef VendorName) {
       .Case("oe", Triple::OpenEmbedded)
       .Case("intel", Triple::Intel)
       .Case("meta", Triple::Meta)
+      .Case("parallax", Triple::Parallax)
       .Default(Triple::UnknownVendor);
 }
 
@@ -1015,6 +1020,7 @@ static Triple::ObjectFormatType getDefaultFormat(const Triple &T) {
   case Triple::nvptx:
   case Triple::ppc64le:
   case Triple::ppcle:
+  case Triple::propeller:
   case Triple::r600:
   case Triple::renderscript32:
   case Triple::renderscript64:
@@ -1755,6 +1761,7 @@ unsigned Triple::getArchPointerBitWidth(llvm::Triple::ArchType Arch) {
   case llvm::Triple::nvptx:
   case llvm::Triple::ppc:
   case llvm::Triple::ppcle:
+  case llvm::Triple::propeller:
   case llvm::Triple::r600:
   case llvm::Triple::renderscript32:
   case llvm::Triple::riscv32:
@@ -1865,6 +1872,7 @@ Triple Triple::get32BitArchVariant() const {
   case Triple::nvptx:
   case Triple::ppc:
   case Triple::ppcle:
+  case Triple::propeller:
   case Triple::r600:
   case Triple::renderscript32:
   case Triple::riscv32:
@@ -1929,6 +1937,7 @@ Triple Triple::get64BitArchVariant() const {
   case Triple::lanai:
   case Triple::m68k:
   case Triple::msp430:
+  case Triple::propeller:
   case Triple::r600:
   case Triple::shave:
   case Triple::sparcel:

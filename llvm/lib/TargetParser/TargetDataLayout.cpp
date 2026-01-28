@@ -541,6 +541,15 @@ static std::string computeVEDataLayout(const Triple &T) {
   return Ret;
 }
 
+static std::string computePropellerDataLayout(const Triple &T) {
+  return "e"       // little endian
+         "-m:e"    // ELF
+         "-p:32:8" // 32-bit pointers, 8 bit aligned
+         "-n32"    // 32-bit registers
+         "-S32"    // 32-bit aligned stack
+      ;
+}
+
 std::string Triple::computeDataLayout(StringRef ABIName) const {
   switch (getArch()) {
   case Triple::arm:
@@ -589,6 +598,8 @@ std::string Triple::computeDataLayout(StringRef ABIName) const {
   case Triple::ppc64:
   case Triple::ppc64le:
     return computePowerDataLayout(*this, ABIName);
+  case Triple::propeller:
+    return computePropellerDataLayout(*this);
   case Triple::r600:
   case Triple::amdgcn:
     return computeAMDDataLayout(*this);
