@@ -8,6 +8,7 @@ tablegen(LLVM PropellerRegisterInfo.inc -gen-register-info)
 add_public_tablegen_target(PropellerCommonTableGen)
 
 add_llvm_target(PropellerCodeGen
+  PropellerRegisterInfo.cpp
   PropellerTargetMachine.cpp
 
   LINK_COMPONENTS
