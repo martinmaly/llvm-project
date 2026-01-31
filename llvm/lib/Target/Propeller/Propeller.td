@@ -1,6 +1,7 @@
 include "llvm/Target/Target.td"
 
 include "PropellerRegisterInfo.td"
+include "PropellerInstrFormats.td"
 include "PropellerInstrInfo.td"
 
 //----------------------------------------------------------------------------//

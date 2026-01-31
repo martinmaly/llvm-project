@@ -9,7 +9,10 @@ To build:
 mkdir llvm-project/build
 cd llvm-project/build
 
-cmake -G Ninja ../llvm -DLLVM_ENABLE_PROJECTS=clang -DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD=Propeller
+cmake -G Ninja ../llvm \
+  -DCMAKE_INSTALL_PREFIX=${HOME}/llvm/bin \
+  -DLLVM_ENABLE_PROJECTS=clang \
+  -DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD=Propeller
 cmake --build .
 
 ```

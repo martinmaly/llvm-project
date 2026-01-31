@@ -4,34 +4,20 @@ let OperandType = "OPERAND_IMMEDIATE" in {
   def i9imm : Operand<i9>;
 }
 
-class I<bits<6> op, dag ool, dag iol> : Instruction {
-  bits<4> zcri;
-  bits<4> cond;
-  bits<9> dest;
-  bits<9> src;
 
-  field bits<32> Inst;
-  let Namespace = "Prop";
-  let Size = 4;
 
-//  let TSFlags = ?;
-  let Inst{31...26} = op;
-  let Inst{25...22} = zcri;
-  let Inst{21...18} = cond;
-  let Inst{17...9}  = dest;
-  let Inst{8...0}   = src;
-
-  let OutOperandList = ool;
-  let InOperandList = iol;
-}
-
-def NOP: I<0b000000, (outs), (ins)> {
+def NOP: PropInst<0b000000, (outs), (ins)> {
   let zcri = 0b0000;
   let cond = 0b0000;
   let dest = 0;
   let src = 0;
 }
 
+defm ABS : Conditional;
+defm ADD : Conditional, InstDS<0b100000>;
+defm AND : InstDS<0b011000>, Conditional;
+
+defm CMP : CInst<0b100001, (outs), (ins)>;
 
 /*
 
@@ -46,24 +32,31 @@ ADDSX  D, S 110110 001i 1111 ddddddddd sssssssss Z & (D+S+C = 0) Signed Overflow
 ADDX   D, S 110010 001i 1111 ddddddddd sssssssss Z & (D+S+C = 0) Unsigned Carry Written 4
 AND    D, S 011000 001i 1111 ddddddddd sssssssss Result = 0 Parity of Result Written 4
 ANDN   D, S 011001 001i 1111 ddddddddd sssssssss Result = 0 Parity of Result Written 4
+
 CALL     #S 010111 0011 1111 ????????? sssssssss Result = 0 --- Written 4
+
 CLKSET D    000011 0001 1111 ddddddddd ------000 --- --- Not Written 8..23 1
+
 CMP    D, S 100001 000i 1111 ddddddddd sssssssss D = S Unsigned (D < S) Not Written 4
 CMPS   D, S 110000 000i 1111 ddddddddd sssssssss D = S Signed (D < S) Not Written 4
 CMPSUB D, S 111000 001i 1111 ddddddddd sssssssss D = S Unsigned (D => S) Written 4
 CMPSX  D, S 110001 000i 1111 ddddddddd sssssssss Z & (D = S+C) Signed (D < S+C) Not Written 4
 CMPX   D, S 110011 000i 1111 ddddddddd sssssssss Z & (D = S+C) Unsigned (D < S+C) Not Written 4
+
 COGID  D    000011 0011 1111 ddddddddd ------001 ID = 0 0 Written 8..23 1
 COGINIT D   000011 0001 1111 ddddddddd ------010 ID = 0 No Cog Free Not Written 8..23 1
 COGSTOP D   000011 0001 1111 ddddddddd ------011 Stopped ID = 0 No Cog Free Not Written 8..23 1
+
 DJNZ   D, S 111001 001i 1111 ddddddddd sssssssss Result = 0 Unsigned Borrow Written 4 or 8 2
 HUBOP  D, S 000011 000i 1111 ddddddddd sssssssss Result = 0 --- Not Written 8..23 1
 JMP       S 010111 000i 1111 --------- sssssssss Result = 0 --- Not Written 4
 JMPRET D, S 010111 001i 1111 ddddddddd sssssssss Result = 0 --- Written 4
+
 LOCKCLR D   000011 0001 1111 ddddddddd ------111 ID = 0 Prior Lock State Not Written 8..23 1
 LOCKNEW D   000011 0011 1111 ddddddddd ------100 ID = 0 No Lock Free Written 8..23 1
 LOCKRET D   000011 0001 1111 ddddddddd ------101 ID = 0 No Lock Free Not Written 8..23 1
 LOCKSET D   000011 0001 1111 ddddddddd ------110 ID = 0 Prior Lock State Not Written 8..23 1
+
 MAX    D, S 010011 001i 1111 ddddddddd sssssssss S = 0 Unsigned (D < S) Written 4
 MAXS   D, S 010001 001i 1111 ddddddddd sssssssss S = 0 Signed (D < S) Written 4
 MIN    D, S 010010 001i 1111 ddddddddd sssssssss S = 0 Unsigned (D < S) Written 4
