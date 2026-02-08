@@ -1,13 +1,19 @@
+def i9 : VTInt<9>;  // 9-bit integer value
+
+let OperandType = "OPERAND_IMMEDIATE" in {
+  def i9imm : Operand<i9>;
+}
+
 class PropInst<bits<6> op, dag ool, dag iol> : Instruction {
   bits<4> zcri;
   bits<4> cond;
   bits<9> dest;
   bits<9> src;
 
-  field bits<32> Inst;
   let Namespace = "Prop";
   let Size = 4;
 
+  field bits<32> Inst;
   let Inst{31...26} = op;
   let Inst{25...22} = zcri;
   let Inst{21...18} = cond;
@@ -18,27 +24,30 @@ class PropInst<bits<6> op, dag ool, dag iol> : Instruction {
   let InOperandList = iol;
 }
 
-def CogMem;
-
-multiclass InstDS<bits<6> op> {
-  def _r : PropInst<op, (outs), (ins)> {}
-  def _i : PropInst<op, (outs), (ins)> {}
-}
-
-multiclass InstD<bits<6> op, bits<3> subop> {
-  def NAME : PropInst<op, (outs), (ins)> {
-    let src{2...0} = subop;
+multiclass PropDSI<bits<6> op, bits<3> zcr, dag ool> {
+  def _r : PropInst<op, ool, (ins AllRegisters:$rs)> {
+    let zcri{3...1} = zcr;
+    let zcri{0}     = 0;
+  }
+  def _i : PropInst<op, ool, (ins i9imm:$is)> {
+    let zcri{3...1} = zcr;
+    let zcri{0}     = 1;
   }
 }
 
-multiclass InstS<Bits<6> op> : InstDS<op> {
-  
+multiclass PropI<bits<6> op, bits<3> zcr>: PropDSI<op, zcr, (outs RWRegisters:$rd)>;
+multiclass PropSI<bits<6> op, bits<3> zcr>: PropDSI<op, zcr, (outs)>;
+multiclass PropD<bits<6> op, bits<4> zcriVal, bits<3> subop> {
+  def NAME: PropInst<op, (outs RWRegisters:$rd), (ins)> {
+    let zcri = zcriVal;
+    let src{8...3} = 0;
+    let src{2...0} = subop;
+  }
 }
 
 class Condition<bits<4> c> {
   bits<4> cond = c;
 }
-
 
 def Condition_if_always    : Condition<0b1111> {} // always []
 def Condition_if_never     : Condition<0b0000> {} // never []
@@ -108,6 +117,6 @@ multiclass Conditional {
   def if_nz_or_nc__ # NAME {}
 }
 
-multiclass CInst<bits<6> op, dag ool, dag iol> : Conditional {
+multiclass CInst<bits<6> op, dag ool, dag iol> {
   def NAME : PropInst<op, ool, iol>{}
 }

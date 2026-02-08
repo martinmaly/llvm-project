@@ -1,24 +1,3 @@
-def i9 : VTInt<9>;  // 9-bit integer value
-
-let OperandType = "OPERAND_IMMEDIATE" in {
-  def i9imm : Operand<i9>;
-}
-
-
-
-def NOP: PropInst<0b000000, (outs), (ins)> {
-  let zcri = 0b0000;
-  let cond = 0b0000;
-  let dest = 0;
-  let src = 0;
-}
-
-defm ABS : Conditional;
-defm ADD : Conditional, InstDS<0b100000>;
-defm AND : InstDS<0b011000>, Conditional;
-
-defm CMP : CInst<0b100001, (outs), (ins)>;
-
 /*
 
 Instruction -INSTR-ZCRI-COND-DESTINATI-SOURCE--- Z Result C Result Result Clocks
@@ -111,3 +90,106 @@ WRWORD D, S 000001 000i 1111 ddddddddd sssssssss --- --- Not Written 8..23 1
 XOR    D, S 011011 001i 1111 ddddddddd sssssssss Result = 0 Parity of Result Written 4
 
 */
+
+defm ABS:    PropI<0b101010, 0b001>;
+defm ABSNEG: PropI<0b101011, 0b001>;
+defm ADD:    PropI<0b100000, 0b001>;
+defm ADDABS: PropI<0b100010, 0b001>;
+defm ADDS:   PropI<0b110100, 0b001>;
+defm ADDSX:  PropI<0b110110, 0b001>;
+defm ADDX:   PropI<0b110010, 0b001>;
+defm AND:    PropI<0b011000, 0b001>;
+defm ANDN:   PropI<0b011001, 0b001>;
+
+def CALL: PropInst<0b010111, (outs), (ins i9imm:$is)> { // CALL     #S 010111 0011 1111 ????????? sssssssss Result = 0 --- Written 4
+  let zcri = 0b1111;
+}
+
+defm CLKSET: PropD<0b000011, 0b0001, 0b000>;
+
+defm CMP:    PropI<0b100001, 0b000>;
+defm CMPS:   PropI<0b110000, 0b000>;
+defm CMPSUB: PropI<0b111000, 0b001>;
+defm CMPSX:  PropI<0b110001, 0b000>;
+defm CMPX:   PropI<0b110011, 0b000>;
+
+defm COGID:   PropD<0b000011, 0b0011, 0b001>;
+defm COGINIT: PropD<0b000011, 0b0001, 0b010>;
+defm COGSTOP: PropD<0b000011, 0b0001, 0b011>;
+
+defm DJNZ:   PropI<0b111001, 0b001>;
+defm HUBOP:  PropI<0b000011, 0b000>;
+defm JMP:    PropSI<0b010111, 0b000>;
+defm JMPRET: PropI<0b010111, 0b001>;
+
+defm LOCKCLR: PropD<0b000011, 0b0001, 0b111>;
+defm LOCKNEW: PropD<0b000011, 0b0011, 0b100>;
+defm LOCKRET: PropD<0b000011, 0b0001, 0b101>;
+defm LOCKSET: PropD<0b000011, 0b0001, 0b110>;
+
+defm MAX:    PropI<0b010011, 0b001>;
+defm MAXS:   PropI<0b010001, 0b001>;
+defm MIN:    PropI<0b010010, 0b001>;
+defm MINS:   PropI<0b010000, 0b001>;
+defm MOV:    PropI<0b101000, 0b001>;
+defm MOVD:   PropI<0b010101, 0b001>;
+defm MOVI:   PropI<0b010110, 0b001>;
+defm MOVS:   PropI<0b010100, 0b001>;
+defm MUXC:   PropI<0b011100, 0b001>;
+defm MUXNC:  PropI<0b011101, 0b001>;
+defm MUXNZ:  PropI<0b011111, 0b001>;
+defm MUXZ:   PropI<0b011110, 0b001>;
+defm NEG:    PropI<0b101001, 0b001>;
+defm NEGC:   PropI<0b101100, 0b001>;
+defm NEGNC:  PropI<0b101101, 0b001>;
+defm NEGNZ:  PropI<0b101111, 0b001>;
+defm NEGZ:   PropI<0b101110, 0b001>;
+
+def NOP: PropInst<0b000000, (outs), (ins)> {
+
+  let zcri = 0b0000;
+  let cond = 0b0000;
+  let dest = 0;
+  let src = 0;
+}
+
+defm OR:     PropI<0b011010, 0b001>;
+defm RCL:    PropI<0b001101, 0b001>;
+defm RCR:    PropI<0b001100, 0b001>;
+defm RDBYTE: PropI<0b000000, 0b001>;
+defm RDLONG: PropI<0b000010, 0b001>;
+defm RDWORD: PropI<0b000001, 0b001>;
+
+def RET: PropInst<0b010111, (outs), (ins)> {
+  let zcri = 0b0001;
+  let dest = 0;
+  let src = 0;
+}
+
+defm REV:     PropI<0b001111, 0b001>;
+defm ROL:     PropI<0b001001, 0b001>;
+defm ROR:     PropI<0b001000, 0b001>;
+defm SAR:     PropI<0b001110, 0b001>;
+defm SHL:     PropI<0b001011, 0b001>;
+defm SHR:     PropI<0b001010, 0b001>;
+defm SUB:     PropI<0b100001, 0b001>;
+defm SUBABS:  PropI<0b100011, 0b001>;
+defm SUBS:    PropI<0b110101, 0b001>;
+defm SUBSX:   PropI<0b110111, 0b001>;
+defm SUBX:    PropI<0b110011, 0b001>;
+defm SUMC:    PropI<0b100100, 0b001>;
+defm SUMNC:   PropI<0b100101, 0b001>;
+defm SUMNZ:   PropI<0b100111, 0b001>;
+defm SUMZ:    PropI<0b100110, 0b001>;
+defm TEST:    PropI<0b011000, 0b000>;
+defm TESTN:   PropI<0b011001, 0b000>;
+defm TJNZ:    PropI<0b111010, 0b000>;
+defm TJZ:     PropI<0b111011, 0b000>;
+defm WAITCNT: PropI<0b111110, 0b001>;
+defm WAITPEQ: PropI<0b111100, 0b000>;
+defm WAITPNE: PropI<0b111101, 0b000>;
+defm WAITVID: PropI<0b111111, 0b000>;
+defm WRBYTE:  PropI<0b000000, 0b000>;
+defm WRLONG:  PropI<0b000010, 0b000>;
+defm WRWORD:  PropI<0b000001, 0b000>;
+defm XOR:     PropI<0b011011, 0b001>;

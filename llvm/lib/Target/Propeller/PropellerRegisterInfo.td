@@ -7,7 +7,6 @@ class PropellerRegister<string n, bits<9> enc> : Register<n> {
 class PropellerRegisterClass<list<ValueType> regTypes, dag regList>
       : RegisterClass<"Propeller", regTypes, 32, regList> {
   let Size = 32;
-
 }
 
 //---------------------------------------------------------------------------//
@@ -59,3 +58,5 @@ let isAllocatable = 0 in {
   def SPR: RegisterClass<"Propeller", [i32], 32, (add SpecialPurposeRegisters)>;
 }
 
+def AllRegisters: RegisterClass<"Propeller", [i32, f32], 32, (add GeneralPurposeRegisters, SpecialPurposeRegisters)>;
+def RWRegisters: RegisterClass<"Propeller", [i32, f32], 32, (add OUTA, OUTB, DIRA, DIRB, CTRA, CTRB, FRQA, FRQB, PHSA, PHSB, VCFG, VSCL, GeneralPurposeRegisters)>;
