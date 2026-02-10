@@ -5,7 +5,15 @@
 
 namespace llvm {
 
-class PropellerTargetMachine final : public CodeGenTargetMachineImpl {};
+class PropellerTargetMachine final : public CodeGenTargetMachineImpl {
+public:
+  PropellerTargetMachine(const Target &T, const Triple &TT, StringRef CPU,
+                         StringRef FS, const TargetOptions &Options,
+                         std::optional<Reloc::Model> RM,
+                         std::optional<CodeModel::Model> CM, CodeGenOptLevel OL,
+                         bool JIT);
+  ~PropellerTargetMachine() override;
+};
 
 } // namespace llvm
 
