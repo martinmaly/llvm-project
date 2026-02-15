@@ -10,6 +10,31 @@ mkdir llvm-project/build
 cd llvm-project/build
 
 cmake -G Ninja ../llvm \
+  -DLLVM_USE_LINKER=lld \
+  -DLLVM_OPTIMIZED_TABLEGEN=On \
+  -DCMAKE_C_COMPILER:FILEPATH=/usr/bin/clang-21 \
+  -DCMAKE_CXX_COMPILER:FILEPATH=/usr/bin/clang++-21 \
+  -DCMAKE_LINKER:FILEPATH=/usr/bin/lld-21 \
+  -DCMAKE_INSTALL_PREFIX=${HOME}/llvm/bin \
+  -DLLVM_ENABLE_PROJECTS=clang \
+  -DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD=Propeller
+cmake --build .
+
+```
+
+To build debug:
+
+```bash
+mkdir llvm-project/build-debug
+cd llvm-project/build-debug
+
+cmake -G Ninja ../llvm \
+  -DCMAKE_BUILD_TYPE=Debug \
+  -DLLVM_USE_LINKER=lld \
+  -DLLVM_OPTIMIZED_TABLEGEN=On \
+  -DCMAKE_C_COMPILER:FILEPATH=/usr/bin/clang-21 \
+  -DCMAKE_CXX_COMPILER:FILEPATH=/usr/bin/clang++-21 \
+  -DCMAKE_LINKER:FILEPATH=/usr/bin/lld-21 \
   -DCMAKE_INSTALL_PREFIX=${HOME}/llvm/bin \
   -DLLVM_ENABLE_PROJECTS=clang \
   -DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD=Propeller
