@@ -15,6 +15,9 @@
 #define GET_REGINFO_MC_DESC
 #include "PropellerGenRegisterInfo.inc"
 
+#define GET_SUBTARGETINFO_MC_DESC
+#include "PropellerGenSubtargetInfo.inc"
+
 static llvm::MCAsmInfo *
 createPropellerMCAsmInfo(const llvm::MCRegisterInfo &MRI,
                          const llvm::Triple &TT,
@@ -36,6 +39,14 @@ createPropellerMCRegisterInfo(const llvm::Triple &TT) {
   return X;
 }
 
+static llvm::MCSubtargetInfo *
+createPropellerMCSubtargetInfo(const llvm::Triple &TT, llvm::StringRef CPU,
+                               llvm::StringRef Features) {
+  llvm::MCSubtargetInfo *STI =
+      createPropellerMCSubtargetInfoImpl(TT, CPU, /*TuneCPU*/ CPU, Features);
+  return STI;
+}
+
 extern "C" LLVM_ABI LLVM_EXTERNAL_VISIBILITY void
 LLVMInitializePropellerTargetMC() {
   llvm::Target &T = llvm::getThePropellerTarget();
@@ -43,4 +54,6 @@ LLVMInitializePropellerTargetMC() {
 
   llvm::TargetRegistry::RegisterMCInstrInfo(T, createPropellerMCInstrInfo);
   llvm::TargetRegistry::RegisterMCRegInfo(T, createPropellerMCRegisterInfo);
+  llvm::TargetRegistry::RegisterMCSubtargetInfo(T,
+                                                createPropellerMCSubtargetInfo);
 }

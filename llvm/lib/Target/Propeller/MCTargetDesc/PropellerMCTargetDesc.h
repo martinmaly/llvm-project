@@ -4,4 +4,11 @@
 #define GET_REGINFO_ENUM
 #include "PropellerGenRegisterInfo.inc"
 
+#define GET_INSTRINFO_ENUM
+#define GET_INSTRINFO_MC_HELPER_DECLS
+#include "PropellerGenInstrInfo.inc"
+
+#define GET_SUBTARGETINFO_ENUM
+#include "PropellerGenSubtargetInfo.inc"
+
 #endif
