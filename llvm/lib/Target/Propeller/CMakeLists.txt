@@ -3,7 +3,7 @@ add_llvm_component_group(Propeller)
 set(LLVM_TARGET_DEFINITIONS Propeller.td)
 
 tablegen(LLVM PropellerGenInstrInfo.inc -gen-instr-info)
-tablegen(LLVM PropellerRegisterInfo.inc -gen-register-info)
+tablegen(LLVM PropellerGenRegisterInfo.inc -gen-register-info)
 
 add_public_tablegen_target(PropellerCommonTableGen)
 

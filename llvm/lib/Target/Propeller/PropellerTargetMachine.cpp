@@ -15,7 +15,9 @@ PropellerTargetMachine::PropellerTargetMachine(
     const TargetOptions &Options, std::optional<Reloc::Model> RM,
     std::optional<CodeModel::Model> CM, CodeGenOptLevel OL, bool JIT)
     : CodeGenTargetMachineImpl(T, TT.computeDataLayout(), TT, CPU, FS, Options,
-                               Reloc::Static, CodeModel::Small, OL) {}
+                               Reloc::Static, CodeModel::Small, OL) {
+  initAsmInfo();
+}
 
 PropellerTargetMachine::~PropellerTargetMachine() = default;
 

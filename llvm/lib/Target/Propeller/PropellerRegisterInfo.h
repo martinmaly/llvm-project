@@ -4,7 +4,7 @@
 #include "llvm/CodeGen/TargetRegisterInfo.h"
 
 #define GET_REGINFO_HEADER
-#include "PropellerRegisterInfo.inc"
+#include "PropellerGenRegisterInfo.inc"
 
 namespace llvm {
 

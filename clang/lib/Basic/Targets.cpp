@@ -30,6 +30,7 @@
 #include "Targets/NVPTX.h"
 #include "Targets/OSTargets.h"
 #include "Targets/PPC.h"
+#include "Targets/Propeller.h"
 #include "Targets/RISCV.h"
 #include "Targets/SPIR.h"
 #include "Targets/Sparc.h"
@@ -419,6 +420,9 @@ std::unique_ptr<TargetInfo> AllocateTarget(const llvm::Triple &Triple,
     default:
       return std::make_unique<PPC64TargetInfo>(Triple, Opts);
     }
+
+  case llvm::Triple::propeller:
+    return std::make_unique<PropellerTargetInfo>(Triple, Opts);
 
   case llvm::Triple::nvptx:
     return std::make_unique<NVPTXTargetInfo>(Triple, Opts,

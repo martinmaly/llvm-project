@@ -2,6 +2,6 @@
 #define LLVM_LIB_TARGET_PROPELLER_MCTARGETDESC_PROPELLERMCTARGETDESC_H
 
 #define GET_REGINFO_ENUM
-#include "PropellerRegisterInfo.inc"
+#include "PropellerGenRegisterInfo.inc"
 
 #endif
