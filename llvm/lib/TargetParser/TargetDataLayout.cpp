@@ -542,11 +542,12 @@ static std::string computeVEDataLayout(const Triple &T) {
 }
 
 static std::string computePropellerDataLayout(const Triple &T) {
-  return "e"       // little endian
-         "-m:e"    // ELF
-         "-p:32:8" // 32-bit pointers, 8 bit aligned
-         "-n32"    // 32-bit registers
-         "-S32"    // 32-bit aligned stack
+  return "e"        // little endian
+         "-m:e"     // ELF
+         "-p:32:32" // 32-bit pointers, 32 bit aligned
+         "-i64:64"  // 64-bit integers, 64 bit aligned
+         "-n32"     // 32-bit registers
+         "-S32"     // 32-bit aligned stack
       ;
 }
 
