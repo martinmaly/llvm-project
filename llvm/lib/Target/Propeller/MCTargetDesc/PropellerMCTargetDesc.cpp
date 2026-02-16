@@ -1,5 +1,6 @@
 #include "PropellerMCTargetDesc.h"
 #include "PropellerMCAsmInfo.h"
+#include "PropellerTargetStreamer.h"
 #include "TargetInfo/PropellerTargetInfo.h"
 #include "llvm/MC/MCAsmInfo.h"
 #include "llvm/MC/MCInstrInfo.h"
@@ -7,6 +8,8 @@
 #include "llvm/MC/MCSubtargetInfo.h"
 #include "llvm/MC/TargetRegistry.h"
 #include "llvm/Support/Compiler.h"
+
+using namespace llvm;
 
 #define GET_INSTRINFO_MC_DESC
 #define ENABLE_INSTR_PREDICATE_VERIFIER
@@ -18,42 +21,47 @@
 #define GET_SUBTARGETINFO_MC_DESC
 #include "PropellerGenSubtargetInfo.inc"
 
-static llvm::MCAsmInfo *
-createPropellerMCAsmInfo(const llvm::MCRegisterInfo &MRI,
-                         const llvm::Triple &TT,
-                         const llvm::MCTargetOptions &Options) {
-  llvm::MCAsmInfo *MAI = new llvm::PropellerMCAsmInfo(TT);
+static MCAsmInfo *createPropellerMCAsmInfo(const MCRegisterInfo &MRI,
+                                           const Triple &TT,
+                                           const MCTargetOptions &Options) {
+  MCAsmInfo *MAI = new PropellerMCAsmInfo(TT);
   return MAI;
 }
 
-static llvm::MCInstrInfo *createPropellerMCInstrInfo() {
-  llvm::MCInstrInfo *X = new llvm::MCInstrInfo();
+static MCInstrInfo *createPropellerMCInstrInfo() {
+  MCInstrInfo *X = new MCInstrInfo();
   InitPropellerMCInstrInfo(X);
   return X;
 }
 
-static llvm::MCRegisterInfo *
-createPropellerMCRegisterInfo(const llvm::Triple &TT) {
-  llvm::MCRegisterInfo *X = new llvm::MCRegisterInfo();
-  InitPropellerMCRegisterInfo(X, llvm::Propeller::Reg0);
+static MCRegisterInfo *createPropellerMCRegisterInfo(const Triple &TT) {
+  MCRegisterInfo *X = new MCRegisterInfo();
+  InitPropellerMCRegisterInfo(X, Propeller::Reg0);
   return X;
 }
 
-static llvm::MCSubtargetInfo *
-createPropellerMCSubtargetInfo(const llvm::Triple &TT, llvm::StringRef CPU,
-                               llvm::StringRef Features) {
-  llvm::MCSubtargetInfo *STI =
+static MCSubtargetInfo *createPropellerMCSubtargetInfo(const Triple &TT,
+                                                       StringRef CPU,
+                                                       StringRef Features) {
+  MCSubtargetInfo *STI =
       createPropellerMCSubtargetInfoImpl(TT, CPU, /*TuneCPU*/ CPU, Features);
   return STI;
 }
 
+static MCTargetStreamer *
+createObjectTargetStreamer(MCStreamer &S, const MCSubtargetInfo &STI) {
+  return new PropellerTargetELFStreamer(S, STI);
+}
+
 extern "C" LLVM_ABI LLVM_EXTERNAL_VISIBILITY void
 LLVMInitializePropellerTargetMC() {
-  llvm::Target &T = llvm::getThePropellerTarget();
-  llvm::RegisterMCAsmInfoFn X(T, createPropellerMCAsmInfo);
+  Target &T = getThePropellerTarget();
+  RegisterMCAsmInfoFn X(T, createPropellerMCAsmInfo);
 
-  llvm::TargetRegistry::RegisterMCInstrInfo(T, createPropellerMCInstrInfo);
-  llvm::TargetRegistry::RegisterMCRegInfo(T, createPropellerMCRegisterInfo);
-  llvm::TargetRegistry::RegisterMCSubtargetInfo(T,
-                                                createPropellerMCSubtargetInfo);
+  TargetRegistry::RegisterMCInstrInfo(T, createPropellerMCInstrInfo);
+  TargetRegistry::RegisterMCRegInfo(T, createPropellerMCRegisterInfo);
+  TargetRegistry::RegisterMCSubtargetInfo(T, createPropellerMCSubtargetInfo);
+  TargetRegistry::RegisterMCCodeEmitter(T, createPropellerMCCodeEmitter);
+  TargetRegistry::RegisterMCAsmBackend(T, createPropellerAsmBackend);
+  TargetRegistry::RegisterObjectTargetStreamer(T, createObjectTargetStreamer);
 }

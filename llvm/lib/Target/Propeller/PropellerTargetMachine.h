@@ -13,6 +13,8 @@ public:
                          std::optional<CodeModel::Model> CM, CodeGenOptLevel OL,
                          bool JIT);
   ~PropellerTargetMachine() override;
+
+  TargetPassConfig *createPassConfig(PassManagerBase &PM) override;
 };
 
 } // namespace llvm
