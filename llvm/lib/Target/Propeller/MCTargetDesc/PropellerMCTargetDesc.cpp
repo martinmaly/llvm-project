@@ -1,4 +1,5 @@
 #include "PropellerMCTargetDesc.h"
+#include "PropellerInstPrinter.h"
 #include "PropellerMCAsmInfo.h"
 #include "PropellerTargetStreamer.h"
 #include "TargetInfo/PropellerTargetInfo.h"
@@ -49,8 +50,26 @@ static MCSubtargetInfo *createPropellerMCSubtargetInfo(const Triple &TT,
 }
 
 static MCTargetStreamer *
-createObjectTargetStreamer(MCStreamer &S, const MCSubtargetInfo &STI) {
+createTargetObjectStreamer(MCStreamer &S, const MCSubtargetInfo &STI) {
   return new PropellerTargetELFStreamer(S, STI);
+}
+
+static MCTargetStreamer *createAsmTargetStreamer(MCStreamer &S,
+                                                 formatted_raw_ostream &OS,
+                                                 MCInstPrinter *InstPrint) {
+  return new PropellerTargetAsmStreamer(S, OS);
+}
+
+static MCTargetStreamer *createNullTargetStreamer(MCStreamer &S) {
+  return new PropellerTargetStreamer(S);
+}
+
+static MCInstPrinter *createPropellerMCInstPrinter(const Triple &T,
+                                                   unsigned SyntaxVariant,
+                                                   const MCAsmInfo &MAI,
+                                                   const MCInstrInfo &MII,
+                                                   const MCRegisterInfo &MRI) {
+  return new PropellerInstPrinter(MAI, MII, MRI);
 }
 
 extern "C" LLVM_ABI LLVM_EXTERNAL_VISIBILITY void
@@ -63,5 +82,8 @@ LLVMInitializePropellerTargetMC() {
   TargetRegistry::RegisterMCSubtargetInfo(T, createPropellerMCSubtargetInfo);
   TargetRegistry::RegisterMCCodeEmitter(T, createPropellerMCCodeEmitter);
   TargetRegistry::RegisterMCAsmBackend(T, createPropellerAsmBackend);
-  TargetRegistry::RegisterObjectTargetStreamer(T, createObjectTargetStreamer);
+  TargetRegistry::RegisterObjectTargetStreamer(T, createTargetObjectStreamer);
+  TargetRegistry::RegisterAsmTargetStreamer(T, createAsmTargetStreamer);
+  TargetRegistry::RegisterNullTargetStreamer(T, createNullTargetStreamer);
+  TargetRegistry::RegisterMCInstPrinter(T, createPropellerMCInstPrinter);
 }

@@ -1,6 +1,7 @@
 add_llvm_component_library(LLVMPropellerDesc
   PropellerAsmBackend.cpp
   PropellerELFObjectWriter.cpp
+  PropellerInstPrinter.cpp
   PropellerMCAsmInfo.cpp
   PropellerMCCodeEmitter.cpp
   PropellerMCTargetDesc.cpp

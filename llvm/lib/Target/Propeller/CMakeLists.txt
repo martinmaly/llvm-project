@@ -9,6 +9,7 @@ tablegen(LLVM PropellerGenSubtargetInfo.inc -gen-subtarget)
 add_public_tablegen_target(PropellerCommonTableGen)
 
 add_llvm_target(PropellerCodeGen
+  PropellerAsmPrinter.cpp
   PropellerISelDAGToDAG.cpp
   PropellerRegisterInfo.cpp
   PropellerSubtarget.cpp

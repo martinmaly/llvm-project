@@ -8,9 +8,12 @@
 namespace llvm {
 
 class FunctionPass;
+class PassRegistry;
 class PropellerTargetMachine;
 
 FunctionPass *createPropellerISelDag(PropellerTargetMachine &TM);
+
+void initializePropellerAsmPrinterPass(PassRegistry &);
 
 } // namespace llvm
 
