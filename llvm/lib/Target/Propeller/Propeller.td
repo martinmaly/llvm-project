@@ -11,6 +11,12 @@ include "PropellerInstrInfo.td"
 defm : RemapAllTargetPseudoPointerOperands<GPR>;
 
 //----------------------------------------------------------------------------//
+// The Propeller Processor Supported
+//----------------------------------------------------------------------------//
+
+def : Processor<"propeller", NoItineraries, []>;
+
+//----------------------------------------------------------------------------//
 // The Propeller Target Definition
 //----------------------------------------------------------------------------//
 
