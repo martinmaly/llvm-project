@@ -1,53 +1,60 @@
+def i3 : VTInt<3>;  // 3-bit integer value
 def i9 : VTInt<9>;  // 9-bit integer value
 
 let OperandType = "OPERAND_IMMEDIATE" in {
   def i9imm : Operand<i9>;
 }
 
-class PropInst<bits<6> op, dag ool, dag iol> : Instruction {
-  bits<4> zcri;
+def CondOp : Operand<i4>;
+def ZCOp   : Operand<i2>;
+
+class PropellerInstruction<dag ool, dag iol> : Instruction {
   bits<4> cond;
-  bits<9> dest;
-  bits<9> src;
 
   let Namespace = "Prop";
   let Size = 4;
-
   field bits<32> Inst;
-  let Inst{31...26} = op;
-  let Inst{25...22} = zcri;
-  let Inst{21...18} = cond;
-  let Inst{17...9}  = dest;
-  let Inst{8...0}   = src;
 
+  let Inst{21...18} = cond;
   let OutOperandList = ool;
   let InOperandList = iol;
 }
 
+class PropInst<bits<6> op, bits<4> zcri, dag ool, dag iol> : PropellerInstruction<ool, iol> {
+  bits<2> zc;
+  bits<9> dest;
+  bits<9> src;
+
+  let Inst{31...26} = op;
+  let Inst{25...24} = zc;
+  let Inst{23...22} = zcri{1...0};
+  let Inst{17...9}  = dest;
+  let Inst{8...0}   = src;
+
+  let TSFlags{2...0} = zcri{3...1};
+}
+
 multiclass PropDSI<bits<6> op, bits<3> zcr, dag ool> {
-  def _r : PropInst<op, ool, (ins AllRegisters:$rs)> {
-    let zcri{3...1} = zcr;
-    let zcri{0}     = 0;
+  def _r : PropInst<op, {zcr{2}, zcr{1}, zcr{0}, 0}, ool, (ins AllRegisters:$src, CondOp:$cond, ZCOp:$zc)> {
   }
-  def _i : PropInst<op, ool, (ins i9imm:$is)> {
-    let zcri{3...1} = zcr;
-    let zcri{0}     = 1;
+  def _i : PropInst<op, {zcr{2}, zcr{1}, zcr{0}, 1}, ool, (ins i9imm:$src, CondOp:$cond, ZCOp:$zc)> {
   }
 }
 
-multiclass PropI<bits<6> op, bits<3> zcr>: PropDSI<op, zcr, (outs RWRegisters:$rd)>;
-multiclass PropSI<bits<6> op, bits<3> zcr>: PropDSI<op, zcr, (outs)>;
-multiclass PropD<bits<6> op, bits<4> zcriVal, bits<3> subop> {
-  def NAME: PropInst<op, (outs RWRegisters:$rd), (ins)> {
-    let zcri = zcriVal;
+multiclass PropI<bits<6> op, bits<3> zcr>: PropDSI<op, zcr, (outs RWRegisters:$dest)>;
+multiclass PropSI<bits<6> op, bits<3> zcr> {
+  let dest = 0 in {
+    defm NAME : PropDSI<op, zcr, (outs)>;
+  }
+}
+multiclass PropD<bits<6> op, bits<4> zcri, bits<3> subop> {
+  def NAME: PropInst<op, zcri, (outs RWRegisters:$dest), (ins CondOp:$cond, ZCOp:$zc)> {
     let src{8...3} = 0;
     let src{2...0} = subop;
   }
 }
 
-class Condition<bits<4> c> {
-  bits<4> cond = c;
-}
+class Condition<bits<4> c> : PatLeaf<(i4 c)>;
 
 def Condition_if_always    : Condition<0b1111> {} // always []
 def Condition_if_never     : Condition<0b0000> {} // never []
@@ -117,6 +124,6 @@ multiclass Conditional {
   def if_nz_or_nc__ # NAME {}
 }
 
-multiclass CInst<bits<6> op, dag ool, dag iol> {
-  def NAME : PropInst<op, ool, iol>{}
+multiclass CInst<bits<6> op, bits<4> zcri, dag ool, dag iol> {
+  def NAME : PropInst<op, zcri, ool, iol>{}
 }

@@ -2,7 +2,10 @@ add_llvm_component_group(Propeller)
 
 set(LLVM_TARGET_DEFINITIONS Propeller.td)
 
+tablegen(LLVM PropellerGenAsmWriter.inc -gen-asm-writer)
 tablegen(LLVM PropellerGenInstrInfo.inc -gen-instr-info)
+tablegen(LLVM PropellerGenDisassemblerTables.inc -gen-disassembler)
+tablegen(LLVM PropellerGenMCCodeEmitter.inc -gen-emitter)
 tablegen(LLVM PropellerGenRegisterInfo.inc -gen-register-info)
 tablegen(LLVM PropellerGenSubtargetInfo.inc -gen-subtarget)
 

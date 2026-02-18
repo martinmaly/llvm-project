@@ -101,8 +101,8 @@ defm ADDX:   PropI<0b110010, 0b001>;
 defm AND:    PropI<0b011000, 0b001>;
 defm ANDN:   PropI<0b011001, 0b001>;
 
-def CALL: PropInst<0b010111, (outs), (ins i9imm:$is)> { // CALL     #S 010111 0011 1111 ????????? sssssssss Result = 0 --- Written 4
-  let zcri = 0b1111;
+def CALL: PropInst<0b010111, 0b0011, (outs), (ins i9imm:$src, CondOp:$cond, ZCOp:$zc)> { // CALL     #S 010111 0011 1111 ????????? sssssssss Result = 0 --- Written 4
+  let dest = 0;
 }
 
 defm CLKSET: PropD<0b000011, 0b0001, 0b000>;
@@ -145,12 +145,8 @@ defm NEGNC:  PropI<0b101101, 0b001>;
 defm NEGNZ:  PropI<0b101111, 0b001>;
 defm NEGZ:   PropI<0b101110, 0b001>;
 
-def NOP: PropInst<0b000000, (outs), (ins)> {
-
-  let zcri = 0b0000;
+def NOP: PropellerInstruction<(outs), (ins)> {
   let cond = 0b0000;
-  let dest = 0;
-  let src = 0;
 }
 
 defm OR:     PropI<0b011010, 0b001>;
@@ -160,8 +156,7 @@ defm RDBYTE: PropI<0b000000, 0b001>;
 defm RDLONG: PropI<0b000010, 0b001>;
 defm RDWORD: PropI<0b000001, 0b001>;
 
-def RET: PropInst<0b010111, (outs), (ins)> {
-  let zcri = 0b0001;
+def RET: PropInst<0b010111, 0b0001, (outs), (ins CondOp:$cond, ZCOp:$zc)> {
   let dest = 0;
   let src = 0;
 }

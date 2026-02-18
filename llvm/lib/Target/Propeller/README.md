@@ -41,3 +41,28 @@ cmake -G Ninja ../llvm \
 cmake --build .
 
 ```
+
+Tablegen:
+
+```bash
+
+cd /home/martin/llvm-project/build/lib/Target/Propeller && \
+/home/martin/llvm-project/build/NATIVE/bin/llvm-tblgen \
+  -I/home/martin/llvm-project/llvm/lib/Target/Propeller \
+  -I/home/martin/llvm-project/build/include \
+  -I/home/martin/llvm-project/llvm/include \
+  -I /home/martin/llvm-project/llvm/lib/Target \
+  /home/martin/llvm-project/llvm/lib/Target/Propeller/Propeller.td \
+  --write-if-changed \
+  -o out.td
+
+cd /home/martin/llvm-project/build/lib/Target/Sparc && \
+/home/martin/llvm-project/build/NATIVE/bin/llvm-tblgen \
+  -I/home/martin/llvm-project/llvm/lib/Target/Sparc \
+  -I/home/martin/llvm-project/build/include \
+  -I/home/martin/llvm-project/llvm/include \
+  -I /home/martin/llvm-project/llvm/lib/Target \
+  /home/martin/llvm-project/llvm/lib/Target/Sparc/Sparc.td \
+  --write-if-changed \
+  -o out.td
+```
